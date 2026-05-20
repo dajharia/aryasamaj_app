@@ -1,0 +1,44 @@
+import React from 'react';
+import { Utensils, Plus, ShoppingCart, TrendingUp, IndianRupee } from 'lucide-react';
+
+export default function CateringPage() {
+  return (
+    <div className="container mx-auto px-4 py-8">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+        <div>
+          <h1 className="text-3xl font-bold text-orange-900">कैटरिंग सेवा</h1>
+          <p className="text-gray-600 mt-2">मेनू प्रबंधन और ऑर्डर ट्रैकिंग</p>
+        </div>
+        <button className="flex items-center bg-orange-600 text-white px-4 py-2 rounded-lg hover:bg-orange-700 transition shadow-sm">
+          <Plus className="w-5 h-5 mr-2" />
+          नया ऑर्डर
+        </button>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <StatCard icon={<ShoppingCart className="w-8 h-8"/>} title="कुल ऑर्डर" value="18" color="bg-blue-100 text-blue-600" />
+        <StatCard icon={<TrendingUp className="w-8 h-8"/>} title="आज के ऑर्डर" value="4" color="bg-green-100 text-green-600" />
+        <StatCard icon={<IndianRupee className="w-8 h-8"/>} title="आज की आय" value="₹ 12,500" color="bg-yellow-100 text-yellow-600" />
+      </div>
+
+      <div className="bg-white rounded-xl shadow-sm p-6 border border-orange-100">
+        <h2 className="text-xl font-semibold text-gray-800 mb-4">मेनू और ऑर्डर</h2>
+        <p className="text-gray-600">कैटरिंग सिस्टम जल्द आ रहा है...</p>
+      </div>
+    </div>
+  );
+}
+
+function StatCard({ icon, title, value, color }: { icon: React.ReactNode, title: string, value: string, color: string }) {
+  return (
+    <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex items-center gap-4">
+      <div className={`p-4 rounded-full ${color}`}>
+        {icon}
+      </div>
+      <div>
+        <p className="text-gray-500 text-sm font-medium mb-1">{title}</p>
+        <p className="text-2xl font-bold text-gray-800">{value}</p>
+      </div>
+    </div>
+  );
+}

@@ -1,0 +1,186 @@
+generator client {
+  provider = "prisma-client-js"
+}
+ 
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+ 
+// User & Authentication
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String
+  password  String
+  role      String   @default("user") // admin, staff, user
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+ 
+// Library Management
+model Book {
+  id            String   @id @default(cuid())
+  title         String
+  author        String
+  isbn          String?  @unique
+  category      String
+  publisher     String?
+  batchNo       String?
+  purchasePrice Float?
+  totalCopies   Int      @default(1)
+  available     Int      @default(1)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  loans         Loan[]
+}
+ 
+model Loan {
+  id        String   @id @default(cuid())
+  bookId    String
+  book      Book     @relation(fields: [bookId], references: [id])
+  memberId  String
+  member    Member   @relation(fields: [memberId], references: [id])
+  loanDate  DateTime @default(now())
+  dueDate   DateTime
+  returnDate DateTime?
+  status    String   @default("borrowed") // borrowed, returned, overdue
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+ 
+model Member {
+  id        String   @id @default(cuid())
+  name      String
+  email     String?  @unique
+  phone     String
+  address   String?
+  joinDate  DateTime @default(now())
+  loans     Loan[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+ 
+// Marriage Hall / Venue Booking
+model Venue {
+  id          String    @id @default(cuid())
+  name        String
+  capacity    Int
+  hourlyRate  Float
+  description String?
+  bookings    Booking[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+ 
+model Booking {
+  id          String   @id @default(cuid())
+  venueId     String
+  venue       Venue    @relation(fields: [venueId], references: [id])
+  customerName String
+  customerPhone String
+  customerEmail String?
+  startDate    DateTime
+  endDate      DateTime
+  amount       Float
+  paidAmount   Float    @default(0)
+  status       String   @default("pending") // pending, confirmed, completed, cancelled
+  notes        String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+ 
+// Catering Service
+model Menu {
+  id          String      @id @default(cuid())
+  name        String
+  description String?
+  pricePerPlate Float
+  category    String
+  items       MenuItem[]
+  orders      CateringOrder[]
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+}
+ 
+model MenuItem {
+  id        String   @id @default(cuid())
+  menuId    String
+  menu      Menu     @relation(fields: [menuId], references: [id])
+  name      String
+  type      String   // veg, non-veg
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+ 
+model CateringOrder {
+  id          String   @id @default(cuid())
+  menuId      String
+  menu        Menu     @relation(fields: [menuId], references: [id])
+  customerName String
+  customerPhone String
+  eventDate   DateTime
+  plates      Int
+  totalAmount Float
+  paidAmount  Float    @default(0)
+  status      String   @default("pending") // pending, confirmed, completed, cancelled
+  notes       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+ 
+// Residential Management
+model Room {
+  id          String      @id @default(cuid())
+  roomNumber  String      @unique
+  type        String      // single, double, suite
+  capacity    Int
+  dailyRate   Float
+  amenities   String?
+  bookings    RoomBooking[]
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+}
+ 
+model RoomBooking {
+  id          String   @id @default(cuid())
+  roomId      String
+  room        Room     @relation(fields: [roomId], references: [id])
+  guestName   String
+  guestPhone String
+  guestEmail String?
+  checkIn     DateTime
+  checkOut    DateTime
+  totalAmount Float
+  paidAmount  Float    @default(0)
+  status      String   @default("pending") // pending, confirmed, checked-in, checked-out, cancelled
+  notes       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+ 
+// Financial Management
+model Transaction {
+  id          String   @id @default(cuid())
+  type        String   // income, expense
+  category    String
+  amount      Float
+  description String
+  date        DateTime @default(now())
+  referenceId String?  // bookingId, orderId, etc.
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+ 
+model Donation {
+  id          String   @id @default(cuid())
+  donorName   String
+  donorPhone  String?
+  donorEmail String?
+  amount      Float
+  purpose     String?
+  date        DateTime @default(now())
+  notes       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
